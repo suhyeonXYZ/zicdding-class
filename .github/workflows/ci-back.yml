@@ -1,0 +1,45 @@
+name: Back_CI
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/**
+      - backend/**
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          sparse-checkout: |
+            backend
+
+      - name: Fetch all tags
+        run: git fetch --tags  # 모든 태그를 가져옵니다.
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            --build-arg DB_DATABASE=${{ secrets.DB_DATABASE }} \
+            --build-arg DB_PORT=${{ secrets.DB_PORT }} \
+            --build-arg DB_HOST=${{ secrets.DB_HOST }} \
+            --build-arg DB_USER=${{ secrets.DB_USER }} \
+            --build-arg DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            --build-arg SECRET_KEY=${{ secrets.SECRET_KEY }} \
+            --build-arg JWT_ALGO=${{ secrets.JWT_ALGO }} \
+            --build-arg JWT_EXP=${{ secrets.JWT_EXP }} \
+            --build-arg JWT_ISSUER=${{ secrets.JWT_ISSUER }} \
+            --build-arg JWT_REFRESH_EXP=${{ secrets.JWT_REFRESH_EXP }} \
+            --build-arg CLIENT_ID=${{ secrets.CLIENT_ID }} \
+            --build-arg CLIENT_SECRET=${{ secrets.CLIENT_SECRET }} \
+            --build-arg REDIRECT_URI=${{ secrets.REDIRECT_URI }} \
+            -t ${{ secrets.DOCKER_USERNAME }}/zicdding-back:${{ env.IMAGE_TAG }} backend
+          
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+          docker push ${{ secrets.DOCKER_USERNAME }}/zicdding-back:${{ env.IMAGE_TAG }}
+          docker tag ${{ secrets.DOCKER_USERNAME }}/zicdding-back:${{ env.IMAGE_TAG }} ${{ secrets.DOCKER_USERNAME }}/zicdding-back:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/zicdding-back:latest
