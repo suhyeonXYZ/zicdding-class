@@ -40,6 +40,6 @@ jobs:
             -t ${{ secrets.DOCKER_USERNAME }}/zicdding-back:${{ env.IMAGE_TAG }} backend
           
           echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-          docker push ${{ secrets.DOCKER_USERNAME }}/zicdding-back:${{ env.IMAGE_TAG }}
-          docker tag ${{ secrets.DOCKER_USERNAME }}/zicdding-back:${{ env.IMAGE_TAG }} ${{ secrets.DOCKER_USERNAME }}/zicdding-back:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/zicdding-back:latest
+          docker push zicdding0904/zicdding-back:${{ env.IMAGE_TAG }}
+          docker tag zicdding0904/zicdding-back:${{ env.IMAGE_TAG }} ${{ secrets.DOCKER_USERNAME }}/zicdding-back:latest
+          docker push zicdding0904/zicdding-back:latest
