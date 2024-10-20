@@ -1,4 +1,4 @@
-name: Backend_CI
+name: Backend_Docker_Build
 on:
   push:
     branches:
