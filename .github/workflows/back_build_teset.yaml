@@ -1,0 +1,62 @@
+name: back_build_test
+
+on:
+  push:
+    branches:
+     - feature/back-cicd
+     - main
+    paths:
+     - 'backend/**'
+     - '.github/**'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      DB_DATABASE: ${{ secrets.DB_DATABASE }}
+      DB_PORT: ${{ secrets.DB_PORT }}
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      JWT_ALGO: ${{ secrets.JWT_ALGO }}
+      JWT_EXP: ${{ secrets.JWT_EXP }}
+      JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
+      JWT_REFRESH_EXP: ${{ secrets.JWT_REFRESH_EXP }}
+      CLIENT_ID: ${{ secrets.CLIENT_ID }}
+      CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+      REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          sparse-checkout: |
+            .github
+            backend
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Cache Node.js modules
+        uses: actions/cache@v2
+        with:
+          path: backend/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: yarn install
+        working-directory: 'backend'
+
+      - name: Prepare dist directory
+        run: rm -rf backend/dist && mkdir backend/dist
+
+      - name: dev project
+        run: |
+          nohup yarn dev > server.log 2>&1 &
+        working-directory: 'backend'
+

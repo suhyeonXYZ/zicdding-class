@@ -1,0 +1,22 @@
+{
+  "name": "@zicdding-web/frontend",
+  "version": "1.0.0",
+  "description": "직띵 클래스 웹 프로젝트 프론트엔드",
+  "main": "index.js",
+  "repository": "https://github.com/Zicdding/zicdding-class",
+  "license": "MIT",
+  "private": true,
+  "packageManager": "yarn@4.2.2",
+  "workspaces": [
+    "zicdding-class.com",
+    "packages/*"
+  ],
+  "devDependencies": {
+    "@biomejs/biome": "1.8.3",
+    "@types/node": "^18",
+    "typescript": "5.3.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
